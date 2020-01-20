@@ -1,5 +1,16 @@
 body {
   background-color: brown;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
+}
+
+.note {
+  background: white;
+  padding: 1rem;
+  text-align: left;
+}
+
+pre {
+  overflow-x: auto;
 }
 
 button {

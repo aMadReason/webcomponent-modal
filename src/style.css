@@ -1,0 +1,43 @@
+body {
+  background-color: brown;
+}
+
+button {
+  padding: 0.5rem 0.8rem;
+  background-color: brown;
+  border: 0;
+  color: white;
+  transform: translateY();
+}
+
+button:hover {
+  cursor: pointer;
+  background-color: rgb(136, 20, 20);
+}
+
+button:focus {
+  transform: translateY(3%);
+}
+
+button:active {
+  transform: translateY(3%);
+}
+
+.listing {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-gap: 0.5rem;
+  justify-items: center;
+}
+
+.listing > * {
+  border: 2px solid rgb(136, 20, 20);
+  padding: 1rem;
+  background-color: white;
+  max-height: 400px;
+  max-width: 300px;
+}
+
+.listing img {
+  width: 100%;
+}

@@ -165,10 +165,11 @@ class Component extends HTMLElement {
   }
 
   dispatch() {
-    const attributes = [].slice
+    const attributes = {};
+    [].slice
       .call(this.attributes)
       .filter(i => i.name && i.value)
-      .map(i => ({ name: i.name, value: i.value }));
+      .map(i => (attributes[i.name] = i.value));
 
     const event = new CustomEvent("wc-event", {
       detail: {

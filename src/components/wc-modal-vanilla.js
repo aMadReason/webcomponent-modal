@@ -8,6 +8,12 @@ const template = () => `
   It's a good idea to prefix WC styles with :host for scoping in shadow dom. 
   Looky here 👀 : https://developers.google.com/web/fundamentals/web-components/shadowdom
   */
+ :host {
+   position: fixed;
+   top: 0;
+   left: 0;
+   z-index: 9999;
+ }
   :host > [role="dialog"]  {
     position: fixed;
     top: 0;
@@ -18,10 +24,15 @@ const template = () => `
     align-items: center;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s;
+    transition: all 0.5s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
   }
 
   :host([data-open=true]) > [role="dialog"] {
+    transition: all 0.5s;
     opacity: 1;
     pointer-events: all;
   }
@@ -35,60 +46,47 @@ const template = () => `
     z-index: -1;
   }
 
-
   :host  .inner {
-    position: absolute; 
+    padding: 1rem 0;
     width: 100%;
     height: 100%;
     max-width: 85%;
     max-width: var(--wc-modal-maxwidth, 85%);
     max-height: 85%;
     max-height: var(--wc-modal-maxheight, 85%);        
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    box-sizing: border-box;    
-  }
-
-  :host .content {
-    padding: 1rem;
+    box-sizing: border-box;   
     background: white;
-    background: var(--wc-modal-bgcolor, white);
-    border-radius: 5px;    
-    overflow-y: auto;
+    background: var(--wc-modal-bgcolor, white); 
+    border-radius: 5px;   
+  } 
+
+  :host  .inner > div {
+    padding: 0 1rem;
     height: 100%;
-    max-height: 85%;
+    overflow-y: auto;
   }
 
-  :host .control {
-    position: absolute;
-    text-align: right;
-    width: 100%;
-  }
-
-  :host .control button.close {
-    transform: translate(-70%, 25%);
-    color: #000;
+  :host button.close {
+    float: right;
     border: 0;
     font-size: 1rem;
     font-weight: bold;
     min-height: 30px;
     min-width: 30px;
-    line-height: 1.1rem;    
-    border: 2px solid 
-    transition: background .2s, rotate .2s;    
-    z-index: 2;
-    opacity: 0.8;
+    margin: 3px;
+    color: var(--wc-txt-2, #333);
+    border-radius: 100%;
+    border: 2px solid transparent;
+    transition: border 0.3s ease, background 0.5s ease;
+    background: transparent;
   }
-
-  :host button.close:hover {
+  :host([data-open]) button.close:hover {
     cursor: pointer;
-    background: #ccc;
+    background: var(--wc-bg-2, #ddd);
   }
-
-  :host button.close:focus {
+  :host([data-open]) button.close:focus {
     cursor: pointer;
-    border-color: #000;
+    border: 2px solid var(--wc-txt-2, #333);
   }
 
   /* Medium devices (tablets, 768px and up) */
@@ -115,14 +113,17 @@ const template = () => `
   <div class="outer"></div>
 
   <div class="inner">
-    <div class="control">
-      <button class="close" aria-label="close">
-      ×
-      </button>
+    <div>
+      <div class="control">
+        <button class="close" aria-label="close">
+        ×
+        </button>
+      </div>
+      <div class="content">
+        <slot></slot>
+      </div>    
     </div>
-    <div class="content">
-      <slot></slot>
-    </div>
+
   </div>
 
 
@@ -200,8 +201,10 @@ class Component extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue === newValue) return false; // if value hadn't changed do nothing
     // respond to attribute changes here
-    if (name === "data-label") this.dialogEl.setAttribute("aria-label", newValue);
-    if (name === "data-labelledby") this.dialogEl.setAttribute("aria-labelledby", newValue);
+    if (name === "data-label")
+      this.dialogEl.setAttribute("aria-label", newValue);
+    if (name === "data-labelledby")
+      this.dialogEl.setAttribute("aria-labelledby", newValue);
     this.dispatch();
     return this;
   }
@@ -229,9 +232,13 @@ class Component extends HTMLElement {
     if (!label && !labelledBy) this.setAttribute("aria-label", "Modal Label");
 
     this.closeEl.addEventListener("click", () => this.close());
-    this.outerEl.addEventListener("click", e => e.target === this.outerEl && this.close());
+    this.outerEl.addEventListener(
+      "click",
+      e => e.target === this.outerEl && this.close()
+    );
 
     this.dom.addEventListener("keydown", e => {
+      console.log(e);
       if (e.key.includes("Esc")) return this.close();
       if (e.key === "Tab") return this.handleTrapFocus(e);
     });
@@ -245,7 +252,10 @@ class Component extends HTMLElement {
 
   disconnectedCallback() {
     this.closeEl.removeEventListener("click", () => this.close());
-    this.outerEl.removeEventListener("click", e => e.target === this.outerEl && this.close());
+    this.outerEl.removeEventListener(
+      "click",
+      e => e.target === this.outerEl && this.close()
+    );
 
     this.dom.removeEventListener("keydown", e => {
       if (e.key.includes("Esc")) return this.close();

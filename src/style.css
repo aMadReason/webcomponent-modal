@@ -28,6 +28,7 @@ button:hover {
 
 button:focus {
   transform: translateY(3%);
+  text-decoration: underline;
 }
 
 button:active {

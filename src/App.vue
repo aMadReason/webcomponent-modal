@@ -46,7 +46,9 @@
 
       <pre>
         &lt;wc-modal data-open="false"&gt;
-          I am the modal content
+          &lt;div class="modal-content" &gt;
+            I am the modal content
+          &lt;/div&gt;          
         &lt;/wc-modal&gt;
 
         &lt;button id="modaltrigger"&gt;
@@ -56,10 +58,13 @@
         &lt;script&gt;
         
         const modal = document.getElementById('wc-modal');
+        const content = document.getElementById('wc-modal > .modal-content');
         const modaltrigger = document.getElementById('modaltrigger');
 
-        modaltrigger.addEcentListener(e, () => {
-          modal.open({ trigger: modaltrigger}); // most accessible as focus will return to trigger on close.
+        modaltrigger.addEventListener("click", (e) => {
+          content.innerHTML = "hello i'm updated content";
+
+          modal.open({ trigger: e.target}); // most accessible as focus will return to trigger on close.
 
           // modal.setAttribute('data-open', true); // this will also work
         })
